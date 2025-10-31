@@ -1,0 +1,112 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # AdminMenu 服务 - 菜单提供者
+    CheckoutPaymentBundle\Service\AdminMenu:
+        arguments:
+            $linkGenerator: '@Tourze\EasyAdminMenuBundle\Service\LinkGeneratorInterface'
+        tags:
+            - { name: easy-admin-menu.provider }
+            
+    # 配置管理服务
+    CheckoutPaymentBundle\Service\CheckoutConfigManager:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+
+    # Checkout API 客户端 - 使用 HttpClientBundle
+    CheckoutPaymentBundle\Service\CheckoutApiClient:
+        arguments:
+            $httpClient: '@?HttpClientBundle\Service\SmartHttpClient'
+            $configManager: '@CheckoutPaymentBundle\Service\CheckoutConfigManager'
+            $logger: '@logger'
+            $configName: '%env(default::string:CHECKOUT_CONFIG_NAME)%'
+        tags:
+            - { name: monolog.logger, channel: checkout_payment }
+
+    CheckoutPaymentBundle\Service\PaymentService:
+        arguments:
+            $apiClient: '@CheckoutPaymentBundle\Service\CheckoutApiClient'
+            $sessionRepository: '@CheckoutPaymentBundle\Repository\PaymentSessionRepository'
+            $paymentRepository: '@CheckoutPaymentBundle\Repository\PaymentRepository'
+            $webhookLogRepository: '@CheckoutPaymentBundle\Repository\WebhookLogRepository'
+            $logger: '@logger'
+            $sessionFactory: '@CheckoutPaymentBundle\Service\PaymentSessionFactory'
+            $paymentFactory: '@CheckoutPaymentBundle\Service\PaymentFactory'
+            $webhookProcessor: '@CheckoutPaymentBundle\Service\WebhookProcessor'
+            $paymentOperations: '@CheckoutPaymentBundle\Service\PaymentOperations'
+            $webhookSecret: '%env(CHECKOUT_WEBHOOK_SECRET)%'
+        tags:
+            - { name: monolog.logger, channel: checkout_payment }
+
+    CheckoutPaymentBundle\Service\WebhookHandler:
+        arguments:
+            $paymentService: '@CheckoutPaymentBundle\Service\PaymentService'
+            $logger: '@logger'
+        tags:
+            - { name: monolog.logger, channel: checkout_payment }
+
+    CheckoutPaymentBundle\Service\PaymentSessionFactory:
+        autowire: true
+
+    CheckoutPaymentBundle\Service\PaymentFactory:
+        autowire: true
+
+    CheckoutPaymentBundle\Service\WebhookProcessor:
+        arguments:
+            $sessionRepository: '@CheckoutPaymentBundle\Repository\PaymentSessionRepository'
+            $paymentRepository: '@CheckoutPaymentBundle\Repository\PaymentRepository'
+            $paymentFactory: '@CheckoutPaymentBundle\Service\PaymentFactory'
+            $logger: '@logger'
+        tags:
+            - { name: monolog.logger, channel: checkout_payment }
+
+    CheckoutPaymentBundle\Service\PaymentOperations:
+        arguments:
+            $apiClient: '@CheckoutPaymentBundle\Service\CheckoutApiClient'
+            $paymentRepository: '@CheckoutPaymentBundle\Repository\PaymentRepository'
+            $refundRepository: '@CheckoutPaymentBundle\Repository\PaymentRefundRepository'
+            $logger: '@logger'
+        tags:
+            - { name: monolog.logger, channel: checkout_payment }
+
+    CheckoutPaymentBundle\Service\AttributeControllerLoader:
+        tags:
+            - { name: routing.auto.loader }
+
+    # Controllers
+    CheckoutPaymentBundle\Controller\:
+        resource: '../../Controller/'
+        tags: ['controller.service_arguments']
+
+    # Commands
+    CheckoutPaymentBundle\Command\:
+        resource: '../../Command/'
+        tags: ['console.command']
+
+
+    CheckoutPaymentBundle\Repository\PaymentSessionRepository:
+        autowire: true
+        tags:
+            - { name: doctrine.repository_service }
+
+    CheckoutPaymentBundle\Repository\PaymentRepository:
+        autowire: true
+        tags:
+            - { name: doctrine.repository_service }
+
+    CheckoutPaymentBundle\Repository\WebhookLogRepository:
+        autowire: true
+        tags:
+            - { name: doctrine.repository_service }
+
+    CheckoutPaymentBundle\Repository\CheckoutConfigRepository:
+        autowire: true
+        tags:
+            - { name: doctrine.repository_service }
+
+    CheckoutPaymentBundle\Repository\PaymentRefundRepository:
+        autowire: true
+        tags:
+            - { name: doctrine.repository_service }

@@ -1,0 +1,9 @@
+services:
+  # DataFixtures configuration for test environment
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  CheckoutPaymentBundle\DataFixtures\:
+    resource: '../../DataFixtures/'
