@@ -9,6 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Tourze\BundleDependency\BundleDependencyInterface;
+use Tourze\EasyAdminMenuBundle\EasyAdminMenuBundle;
 use Tourze\RoutingAutoLoaderBundle\RoutingAutoLoaderBundle;
 
 class CheckoutPaymentBundle extends Bundle implements BundleDependencyInterface
@@ -18,6 +19,7 @@ class CheckoutPaymentBundle extends Bundle implements BundleDependencyInterface
         return [
             DoctrineBundle::class => ['all' => true],
             RoutingAutoLoaderBundle::class => ['all' => true],
+            EasyAdminMenuBundle::class => ['all' => true],
         ];
     }
 
