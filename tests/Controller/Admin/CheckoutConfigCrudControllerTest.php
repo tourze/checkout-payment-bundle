@@ -19,7 +19,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 {
     private KernelBrowser $client;
 
-    protected function onSetUp(): void
+    protected function afterEasyAdminSetUp(): void
     {
         $this->client = self::createClientWithDatabase();
 
