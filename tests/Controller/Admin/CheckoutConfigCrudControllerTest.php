@@ -255,8 +255,11 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 
     public function testCreateCheckoutConfigInvalidTimeout(): void
     {
+        // 使用认证客户端确保权限正确
+        $client = $this->createAuthenticatedClient();
+
         // Test invalid timeout (negative value)
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'description' => 'Test description',
@@ -266,7 +269,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
             ],
         ]);
 
-        $response = $this->client->getResponse();
+        $response = $client->getResponse();
         $this->assertThat(
             $response->getStatusCode(),
             self::logicalOr(
@@ -278,8 +281,11 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 
     public function testCreateCheckoutConfigInvalidRetryAttempts(): void
     {
+        // 使用认证客户端确保权限正确
+        $client = $this->createAuthenticatedClient();
+
         // Test invalid retry attempts (negative value)
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'description' => 'Test description',
@@ -289,7 +295,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
             ],
         ]);
 
-        $response = $this->client->getResponse();
+        $response = $client->getResponse();
         $this->assertThat(
             $response->getStatusCode(),
             self::logicalOr(
@@ -301,8 +307,11 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 
     public function testCreateCheckoutConfigMissingSandbox(): void
     {
+        // 使用认证客户端确保权限正确
+        $client = $this->createAuthenticatedClient();
+
         // Test missing isSandbox field
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'description' => 'Test description',
@@ -312,7 +321,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
             ],
         ]);
 
-        $response = $this->client->getResponse();
+        $response = $client->getResponse();
         $this->assertThat(
             $response->getStatusCode(),
             self::logicalOr(
@@ -324,8 +333,11 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 
     public function testCreateCheckoutConfigMissingDefault(): void
     {
+        // 使用认证客户端确保权限正确
+        $client = $this->createAuthenticatedClient();
+
         // Test missing isDefault field
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'description' => 'Test description',
@@ -335,7 +347,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
             ],
         ]);
 
-        $response = $this->client->getResponse();
+        $response = $client->getResponse();
         $this->assertThat(
             $response->getStatusCode(),
             self::logicalOr(
