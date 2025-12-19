@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CheckoutPaymentBundle\Exception;
 
-class CheckoutApiException extends \RuntimeException
+final class CheckoutApiException extends \RuntimeException
 {
     public static function requestFailed(string $message, ?\Throwable $previous = null): self
     {

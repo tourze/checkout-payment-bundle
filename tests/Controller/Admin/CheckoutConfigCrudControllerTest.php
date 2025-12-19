@@ -21,11 +21,8 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 
     protected function afterEasyAdminSetUp(): void
     {
-        $this->client = self::createClientWithDatabase();
-
-        // 创建并登录管理员用户
-        $this->createAdminUser('admin@test.com', 'adminpass');
-        $this->loginAsAdmin($this->client, 'admin@test.com', 'adminpass');
+        // 使用基类的 createAuthenticatedClient 方法确保一致的认证
+        $this->client = $this->createAuthenticatedClient();
 
         // 设置静态客户端到 BrowserKitAssertionsTrait
         // 这解决了父类 testUnauthenticatedAccessDenied 中的客户端断言问题
@@ -34,21 +31,25 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 
     public function testIndex(): void
     {
-        $this->client->request('GET', '/admin?entity=CheckoutConfig&action=index');
+        // 使用正确的 EasyAdmin URL 生成方法
+        $url = $this->generateAdminUrl('index');
+        $this->client->request('GET', $url);
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testNew(): void
     {
-        $this->client->request('GET', '/admin?entity=CheckoutConfig&action=new');
+        $url = $this->generateAdminUrl('new');
+        $this->client->request('GET', $url);
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testCreateCheckoutConfig(): void
     {
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $url = $this->generateAdminUrl('new');
+        $this->client->request('POST', $url, [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'apiKey' => 'test_api_key',
@@ -71,7 +72,8 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
     public function testCreateCheckoutConfigValidation(): void
     {
         // Test missing required fields
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $url = $this->generateAdminUrl('new');
+        $this->client->request('POST', $url, [
             'checkout_config' => [
                 'name' => '', // Empty name should fail validation
                 'apiKey' => 'test_api_key',
@@ -94,7 +96,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
     public function testCreateCheckoutConfigMissingApiKey(): void
     {
         // Test missing API key
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $this->client->request('POST', $this->generateAdminUrl('new'), [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'apiKey' => '', // Empty API key should fail validation
@@ -117,7 +119,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
     public function testCreateCheckoutConfigMissingDescription(): void
     {
         // Test missing description
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $this->client->request('POST', $this->generateAdminUrl('new'), [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'description' => '', // Empty description should fail validation
@@ -140,7 +142,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
     public function testCreateCheckoutConfigMissingEnabled(): void
     {
         // Test missing enabled field
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $this->client->request('POST', $this->generateAdminUrl('new'), [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'description' => 'Test description',
@@ -184,7 +186,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
     public function testCreateCheckoutConfigMissingApiSecret(): void
     {
         // Test missing API secret
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $this->client->request('POST', $this->generateAdminUrl('new'), [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'apiKey' => 'test_api_key',
@@ -208,7 +210,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
     public function testCreateCheckoutConfigMissingEnvironment(): void
     {
         // Test missing environment
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $this->client->request('POST', $this->generateAdminUrl('new'), [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'apiKey' => 'test_api_key',
@@ -232,7 +234,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
     public function testCreateCheckoutConfigMissingName(): void
     {
         // Test missing name
-        $this->client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $this->client->request('POST', $this->generateAdminUrl('new'), [
             'checkout_config' => [
                 'name' => '', // Empty name should fail validation
                 'apiKey' => 'test_api_key',
@@ -255,11 +257,9 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 
     public function testCreateCheckoutConfigInvalidTimeout(): void
     {
-        // 使用认证客户端确保权限正确
-        $client = $this->createAuthenticatedClient();
-
+        // 使用已设置的认证客户端确保权限正确
         // Test invalid timeout (negative value)
-        $client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $this->client->request('POST', $this->generateAdminUrl('new'), [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'description' => 'Test description',
@@ -269,7 +269,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
             ],
         ]);
 
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertThat(
             $response->getStatusCode(),
             self::logicalOr(
@@ -281,11 +281,9 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 
     public function testCreateCheckoutConfigInvalidRetryAttempts(): void
     {
-        // 使用认证客户端确保权限正确
-        $client = $this->createAuthenticatedClient();
-
+        // 使用已设置的认证客户端确保权限正确
         // Test invalid retry attempts (negative value)
-        $client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $this->client->request('POST', $this->generateAdminUrl('new'), [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'description' => 'Test description',
@@ -295,7 +293,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
             ],
         ]);
 
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertThat(
             $response->getStatusCode(),
             self::logicalOr(
@@ -307,11 +305,9 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 
     public function testCreateCheckoutConfigMissingSandbox(): void
     {
-        // 使用认证客户端确保权限正确
-        $client = $this->createAuthenticatedClient();
-
+        // 使用已设置的认证客户端确保权限正确
         // Test missing isSandbox field
-        $client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $this->client->request('POST', $this->generateAdminUrl('new'), [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'description' => 'Test description',
@@ -321,7 +317,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
             ],
         ]);
 
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertThat(
             $response->getStatusCode(),
             self::logicalOr(
@@ -333,11 +329,9 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
 
     public function testCreateCheckoutConfigMissingDefault(): void
     {
-        // 使用认证客户端确保权限正确
-        $client = $this->createAuthenticatedClient();
-
+        // 使用已设置的认证客户端确保权限正确
         // Test missing isDefault field
-        $client->request('POST', '/admin?entity=CheckoutConfig&action=new', [
+        $this->client->request('POST', $this->generateAdminUrl('new'), [
             'checkout_config' => [
                 'name' => 'Test Config',
                 'description' => 'Test description',
@@ -347,7 +341,7 @@ final class CheckoutConfigCrudControllerTest extends AbstractEasyAdminController
             ],
         ]);
 
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertThat(
             $response->getStatusCode(),
             self::logicalOr(

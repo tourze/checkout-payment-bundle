@@ -26,7 +26,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Tourze\RoutingAutoLoaderBundle\Service\RoutingAutoLoaderInterface;
 
 #[AutoconfigureTag(name: 'routing.auto.loader')]
-class AttributeControllerLoader extends Loader implements RoutingAutoLoaderInterface
+final class AttributeControllerLoader extends Loader implements RoutingAutoLoaderInterface
 {
     private AttributeRouteControllerLoader $controllerLoader;
 

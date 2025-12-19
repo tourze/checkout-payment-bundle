@@ -8,9 +8,11 @@ use CheckoutPaymentBundle\Entity\CheckoutConfig;
 use CheckoutPaymentBundle\Repository\CheckoutConfigRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Monolog\Attribute\WithMonologChannel;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 
 #[Autoconfigure(public: true)]
+#[WithMonologChannel(channel: 'checkout_payment')]
 readonly class CheckoutConfigManager
 {
     public function __construct(

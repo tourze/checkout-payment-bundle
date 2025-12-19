@@ -9,8 +9,10 @@ use CheckoutPaymentBundle\Entity\PaymentSession;
 use CheckoutPaymentBundle\Exception\PaymentException;
 use CheckoutPaymentBundle\Repository\PaymentRepository;
 use CheckoutPaymentBundle\Repository\PaymentSessionRepository;
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 
+#[WithMonologChannel(channel: 'checkout_payment')]
 readonly class WebhookProcessor
 {
     public function __construct(

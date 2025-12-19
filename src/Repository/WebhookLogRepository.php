@@ -13,7 +13,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<WebhookLog>
  */
 #[AsRepository(entityClass: WebhookLog::class)]
-class WebhookLogRepository extends ServiceEntityRepository
+final class WebhookLogRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

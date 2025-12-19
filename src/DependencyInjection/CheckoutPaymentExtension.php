@@ -6,7 +6,7 @@ namespace CheckoutPaymentBundle\DependencyInjection;
 
 use Tourze\SymfonyDependencyServiceLoader\AutoExtension;
 
-class CheckoutPaymentExtension extends AutoExtension
+final class CheckoutPaymentExtension extends AutoExtension
 {
     public function getAlias(): string
     {

@@ -9,8 +9,10 @@ use CheckoutPaymentBundle\Entity\PaymentRefund;
 use CheckoutPaymentBundle\Exception\PaymentException;
 use CheckoutPaymentBundle\Repository\PaymentRefundRepository;
 use CheckoutPaymentBundle\Repository\PaymentRepository;
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 
+#[WithMonologChannel(channel: 'checkout_payment')]
 readonly class PaymentOperations
 {
     public function __construct(

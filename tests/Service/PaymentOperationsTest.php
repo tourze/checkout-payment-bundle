@@ -11,52 +11,31 @@ use CheckoutPaymentBundle\Repository\PaymentRepository;
 use CheckoutPaymentBundle\Service\CheckoutApiClient;
 use CheckoutPaymentBundle\Service\PaymentOperations;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * @internal
  */
 #[CoversClass(PaymentOperations::class)]
-final class PaymentOperationsTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class PaymentOperationsTest extends AbstractIntegrationTestCase
 {
-    /** @var CheckoutApiClient&MockObject */
-    private CheckoutApiClient $apiClient;
-
-    /** @var PaymentRepository&MockObject */
-    private PaymentRepository $paymentRepository;
-
-    /** @var PaymentRefundRepository&MockObject */
-    private PaymentRefundRepository $refundRepository;
-
-    /** @var LoggerInterface&MockObject */
-    private LoggerInterface $logger;
-
     private PaymentOperations $operations;
 
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        $this->apiClient = $this->createMock(CheckoutApiClient::class);
-        $this->paymentRepository = $this->createMock(PaymentRepository::class);
-        $this->refundRepository = $this->createMock(PaymentRefundRepository::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-
-        $this->operations = new PaymentOperations(
-            $this->apiClient,
-            $this->paymentRepository,
-            $this->refundRepository,
-            $this->logger
-        );
+        // 直接从容器获取 PaymentOperations 服务
+        $this->operations = self::getService(PaymentOperations::class);
     }
 
     public function testCapturePaymentThrowsExceptionWhenPaymentNotFound(): void
     {
-        $this->paymentRepository
-            ->method('findByPaymentId')
-            ->with('pay_123')
-            ->willReturn(null)
-        ;
+        // 使用真实的 Repository，pay_123 不存在，会返回 null
+        // 这正是我们测试的场景
 
         $this->expectException(PaymentException::class);
         $this->operations->capturePayment('pay_123');
@@ -64,11 +43,8 @@ final class PaymentOperationsTest extends TestCase
 
     public function testVoidPaymentThrowsExceptionWhenPaymentNotFound(): void
     {
-        $this->paymentRepository
-            ->method('findByPaymentId')
-            ->with('pay_123')
-            ->willReturn(null)
-        ;
+        // 使用真实的 Repository，pay_123 不存在，会返回 null
+        // 这正是我们测试的场景
 
         $this->expectException(PaymentException::class);
         $this->operations->voidPayment('pay_123');
@@ -76,11 +52,8 @@ final class PaymentOperationsTest extends TestCase
 
     public function testRefundPaymentThrowsExceptionWhenPaymentNotFound(): void
     {
-        $this->paymentRepository
-            ->method('findByPaymentId')
-            ->with('pay_123')
-            ->willReturn(null)
-        ;
+        // 使用真实的 Repository，pay_123 不存在，会返回 null
+        // 这正是我们测试的场景
 
         $this->expectException(PaymentException::class);
         $this->operations->refundPayment('pay_123');

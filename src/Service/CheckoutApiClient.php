@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 
 #[Autoconfigure(public: true)]
-class CheckoutApiClient
+final class CheckoutApiClient
 {
     public function __construct(
         private ?SmartHttpClient $httpClient,

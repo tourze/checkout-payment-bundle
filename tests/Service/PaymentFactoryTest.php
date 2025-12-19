@@ -8,23 +8,25 @@ use CheckoutPaymentBundle\Entity\Payment;
 use CheckoutPaymentBundle\Entity\PaymentSession;
 use CheckoutPaymentBundle\Service\PaymentFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * @internal
  */
 #[CoversClass(PaymentFactory::class)]
-final class PaymentFactoryTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class PaymentFactoryTest extends AbstractIntegrationTestCase
 {
-    private PaymentFactory $factory;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        $this->factory = new PaymentFactory();
+        // 集成测试不需要特殊设置
     }
 
     public function testCreateFromApiResponse(): void
     {
+        $factory = self::getService(PaymentFactory::class);
+
         $session = new PaymentSession();
         $session->setSessionId('session_123');
 
@@ -37,7 +39,7 @@ final class PaymentFactoryTest extends TestCase
             'response_code' => '10000',
         ];
 
-        $payment = $this->factory->createFromApiResponse($apiResponse, $session, 'ref_123');
+        $payment = $factory->createFromApiResponse($apiResponse, $session, 'ref_123');
 
         $this->assertSame('pay_123', $payment->getPaymentId());
         $this->assertSame($session, $payment->getSession());
@@ -49,6 +51,8 @@ final class PaymentFactoryTest extends TestCase
 
     public function testUpdateFromWebhookData(): void
     {
+        $factory = self::getService(PaymentFactory::class);
+
         $payment = new Payment();
 
         $webhookData = [
@@ -58,7 +62,7 @@ final class PaymentFactoryTest extends TestCase
             'response_summary' => 'Payment captured',
         ];
 
-        $this->factory->updateFromWebhookData($payment, $webhookData);
+        $factory->updateFromWebhookData($payment, $webhookData);
 
         $this->assertSame(5000, $payment->getAmount());
         $this->assertSame('EUR', $payment->getCurrency());

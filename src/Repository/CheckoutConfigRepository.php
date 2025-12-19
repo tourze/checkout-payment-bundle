@@ -13,7 +13,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<CheckoutConfig>
  */
 #[AsRepository(entityClass: CheckoutConfig::class)]
-class CheckoutConfigRepository extends ServiceEntityRepository
+final class CheckoutConfigRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

@@ -7,23 +7,25 @@ namespace CheckoutPaymentBundle\Tests\Service;
 use CheckoutPaymentBundle\Entity\PaymentSession;
 use CheckoutPaymentBundle\Service\PaymentSessionFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * @internal
  */
 #[CoversClass(PaymentSessionFactory::class)]
-final class PaymentSessionFactoryTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class PaymentSessionFactoryTest extends AbstractIntegrationTestCase
 {
-    private PaymentSessionFactory $factory;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        $this->factory = new PaymentSessionFactory();
+        // 集成测试不需要特殊设置
     }
 
     public function testCreateFromDataWithRequiredFields(): void
     {
+        $factory = self::getService(PaymentSessionFactory::class);
+
         $data = [
             'reference' => 'REF-123',
             'amount' => 1000,
@@ -33,7 +35,7 @@ final class PaymentSessionFactoryTest extends TestCase
             'cancel_url' => 'https://example.com/cancel',
         ];
 
-        $session = $this->factory->createFromData($data);
+        $session = $factory->createFromData($data);
 
         self::assertSame('REF-123', $session->getReference());
         self::assertSame(1000, $session->getAmount());
@@ -45,6 +47,8 @@ final class PaymentSessionFactoryTest extends TestCase
 
     public function testCreateFromDataWithOptionalFields(): void
     {
+        $factory = self::getService(PaymentSessionFactory::class);
+
         $data = [
             'reference' => 'REF-123',
             'amount' => 1000,
@@ -65,7 +69,7 @@ final class PaymentSessionFactoryTest extends TestCase
             ],
         ];
 
-        $session = $this->factory->createFromData($data);
+        $session = $factory->createFromData($data);
 
         self::assertSame('Test payment', $session->getDescription());
         self::assertSame('John Doe', $session->getCustomerName());
@@ -78,9 +82,11 @@ final class PaymentSessionFactoryTest extends TestCase
 
     public function testCreateFromDataWithDefaults(): void
     {
+        $factory = self::getService(PaymentSessionFactory::class);
+
         $data = [];
 
-        $session = $this->factory->createFromData($data);
+        $session = $factory->createFromData($data);
 
         self::assertSame('', $session->getReference());
         self::assertSame(0, $session->getAmount());
@@ -95,6 +101,8 @@ final class PaymentSessionFactoryTest extends TestCase
 
     public function testCreateFromDataWithInvalidTypes(): void
     {
+        $factory = self::getService(PaymentSessionFactory::class);
+
         $data = [
             'reference' => 123, // should be string
             'amount' => 'invalid', // should be numeric
@@ -102,7 +110,7 @@ final class PaymentSessionFactoryTest extends TestCase
             'customer_email' => false, // should be string
         ];
 
-        $session = $this->factory->createFromData($data);
+        $session = $factory->createFromData($data);
 
         self::assertSame('', $session->getReference());
         self::assertSame(0, $session->getAmount());

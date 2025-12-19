@@ -2,7 +2,6 @@
 
 namespace CheckoutPaymentBundle\Tests\Service;
 
-use CheckoutPaymentBundle\Entity\PaymentSession;
 use CheckoutPaymentBundle\Service\CheckoutApiClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -59,16 +58,21 @@ final class CheckoutApiClientTest extends AbstractIntegrationTestCase
     {
         $apiClient = self::getService(CheckoutApiClient::class);
 
-        $session = $this->createMock(PaymentSession::class);
-        $session->method('getAmount')->willReturn(1000);
-        $session->method('getCurrency')->willReturn('USD');
-        $session->method('getReference')->willReturn('test_ref');
-        $session->method('getDescription')->willReturn('Test');
-        $session->method('getCustomerEmail')->willReturn('test@example.com');
-        $session->method('getCustomerName')->willReturn('Test User');
-        $session->method('getSuccessUrl')->willReturn('https://example.com/success');
-        $session->method('getCancelUrl')->willReturn('https://example.com/cancel');
-        $session->method('getFailureUrl')->willReturn('https://example.com/failure');
+        // 创建真实的 PaymentSession 对象，使用 DI 容器中的服务
+        $sessionFactory = self::getService(\CheckoutPaymentBundle\Service\PaymentSessionFactory::class);
+        $entityManager = self::getService(\Doctrine\ORM\EntityManagerInterface::class);
+
+        $session = $sessionFactory->createFromData([
+            'amount' => 1000,
+            'currency' => 'USD',
+            'reference' => 'test_ref',
+            'description' => 'Test',
+            'customer_email' => 'test@example.com',
+            'customer_name' => 'Test User',
+            'success_url' => 'https://example.com/success',
+            'cancel_url' => 'https://example.com/cancel',
+            'failure_url' => 'https://example.com/failure',
+        ]);
 
         try {
             $result = $apiClient->createHostedPaymentSession($session);

@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace CheckoutPaymentBundle\Service;
 
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 #[Autoconfigure(public: true)]
-class WebhookHandler
+#[WithMonologChannel(channel: 'checkout_payment')]
+final class WebhookHandler
 {
     private PaymentService $paymentService;
 

@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 
 #[Autoconfigure(public: true)]
-class PaymentService
+final class PaymentService
 {
     public function __construct(
         private readonly CheckoutApiClient $apiClient,

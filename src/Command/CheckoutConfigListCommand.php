@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
     description: '列出所有 Checkout 支付配置'
 )]
 #[Autoconfigure(public: true)]
-class CheckoutConfigListCommand extends Command
+final class CheckoutConfigListCommand extends Command
 {
     public function __construct(
         private readonly CheckoutConfigManager $configManager,

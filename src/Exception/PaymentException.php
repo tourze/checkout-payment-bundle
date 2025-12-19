@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CheckoutPaymentBundle\Exception;
 
-class PaymentException extends \RuntimeException
+final class PaymentException extends \RuntimeException
 {
     public static function paymentNotFound(string $paymentId): self
     {

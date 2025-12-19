@@ -26,7 +26,7 @@ class CheckoutConfigListCommandTest extends AbstractCommandTestCase
         $command = self::getService(CheckoutConfigListCommand::class);
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         return new CommandTester($application->find('checkout:config:list'));
     }
@@ -36,7 +36,7 @@ class CheckoutConfigListCommandTest extends AbstractCommandTestCase
         $command = self::getService(CheckoutConfigListCommand::class);
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($application->find('checkout:config:list'));
         $commandTester->execute([]);
@@ -58,7 +58,7 @@ class CheckoutConfigListCommandTest extends AbstractCommandTestCase
         $command = self::getService(CheckoutConfigListCommand::class);
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($application->find('checkout:config:list'));
         $commandTester->execute([]);
